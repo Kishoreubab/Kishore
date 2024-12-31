@@ -1,0 +1,183 @@
+USE imdb;
+
+-- 1. Movies Table
+CREATE TABLE Movies (
+    movie_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    release_date DATE,
+    director VARCHAR(255),
+    duration INT, -- Duration in minutes
+    description TEXT
+);
+
+-- 2. Media Table (for storing videos or images related to movies)
+CREATE TABLE Media (
+    media_id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    media_type ENUM('Video', 'Image') NOT NULL,  -- Media type: Video or Image
+    media_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id) ON DELETE CASCADE
+);
+
+-- 3. Genres Table
+CREATE TABLE Genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+-- 4. MovieGenres Table (junction table for many-to-many relationship between movies and genres)
+CREATE TABLE MovieGenres (
+    movie_id INT,
+    genre_id INT,
+    PRIMARY KEY (movie_id, genre_id),
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id) ON DELETE CASCADE
+);
+
+-- 5. Users Table (stores user information)
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+-- 6. Reviews Table (stores reviews written by users for movies)
+CREATE TABLE Reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    user_id INT,
+    rating INT NOT NULL, -- Rating scale, e.g., 1 to 10
+    review_text TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- 7. Artists Table (stores information about the artists like actors and directors)
+CREATE TABLE Artists (
+    artist_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    birthdate DATE,
+    bio TEXT
+);
+
+-- 8. Skills Table (stores skills that artists can have)
+CREATE TABLE Skills (
+    skill_id INT AUTO_INCREMENT PRIMARY KEY,
+    skill_name VARCHAR(100) NOT NULL
+);
+
+-- 9. ArtistSkills Table (junction table for many-to-many relationship between artists and skills)
+CREATE TABLE ArtistSkills (
+    artist_id INT,
+    skill_id INT,
+    PRIMARY KEY (artist_id, skill_id),
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE,
+    FOREIGN KEY (skill_id) REFERENCES Skills(skill_id) ON DELETE CASCADE
+);
+
+-- 10. Roles Table (stores roles played by artists in movies)
+CREATE TABLE Roles (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT,
+    artist_id INT,
+    role_name VARCHAR(255) NOT NULL,  -- Name of the role in the movie
+    FOREIGN KEY (movie_id) REFERENCES Movies(movie_id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE
+);
+
+
+INSERT INTO Genres (name) VALUES 
+('Action'),
+('Drama'),
+('Comedy'),
+('Sci-Fi'),
+('Horror');
+
+
+INSERT INTO Movies (title, release_date, director, duration, description) 
+VALUES 
+('Avengers: Endgame', '2019-04-26', 'Anthony Russo', 181, 'The Avengers assemble once again to fight Thanos.'),
+('The Pursuit of Happyness', '2006-12-15', 'Gabriele Muccino', 117, 'A struggling salesman takes custody of his son.'),
+('Inception', '2010-07-16', 'Christopher Nolan', 148, 'A thief who enters the minds of others through dream manipulation is given a chance to have his criminal history erased.'),
+('The Dark Knight', '2008-07-18', 'Christopher Nolan', 152, 'Batman faces the Joker, a criminal mastermind who wants to create chaos in Gotham City.'),
+('The Conjuring', '2013-07-19', 'James Wan', 112, 'Paranormal investigators work to help a family terrorized by a dark presence in their farmhouse.');
+
+
+INSERT INTO Media (movie_id, media_type, media_url) 
+VALUES 
+(1, 'Video', 'http://example.com/avengers_endgame_trailer.mp4'),
+(1, 'Image', 'http://example.com/avengers_endgame_poster.jpg'),
+(2, 'Image', 'http://example.com/pursuit_of_happyness_poster.jpg'),
+(3, 'Image', 'http://example.com/inception_poster.jpg'),
+(4, 'Video', 'http://example.com/dark_knight_trailer.mp4');
+	
+
+INSERT INTO Skills (skill_name) VALUES 
+('Acting'),
+('Directing'),
+('Producing'),
+('Writing'),
+('Cinematography');
+
+
+-- Robert Downey Jr.
+INSERT INTO ArtistSkills (artist_id, skill_id) VALUES 
+(1, 1),  -- Robert Downey Jr. has Acting skill
+(1, 2);  -- Robert Downey Jr. has Directing skill
+
+-- Will Smith
+INSERT INTO ArtistSkills (artist_id, skill_id) VALUES 
+(2, 1),  -- Will Smith has Acting skill
+(2, 2);  -- Will Smith has Directing skill
+
+-- Leonardo DiCaprio
+INSERT INTO ArtistSkills (artist_id, skill_id) VALUES 
+(3, 1),  -- Leonardo DiCaprio has Acting skill
+(3, 2);  -- Leonardo DiCaprio has Directing skill
+
+-- Christian Bale
+INSERT INTO ArtistSkills (artist_id, skill_id) VALUES 
+(4, 1),  -- Christian Bale has Acting skill
+(4, 2);  -- Christian Bale has Directing skill
+
+-- Vera Farmiga
+INSERT INTO ArtistSkills (artist_id, skill_id) VALUES 
+(5, 1),  -- Vera Farmiga has Acting skill
+(5, 2);  -- Vera Farmiga has Directing skill
+
+
+INSERT INTO MovieGenres (movie_id, genre_id) VALUES 
+(1, 1),  -- Avengers: Endgame is of Action genre
+(1, 2),  -- Avengers: Endgame is also of Drama genre
+(2, 2),  -- The Pursuit of Happyness is of Drama genre
+(3, 1),  -- Inception is of Action genre
+(3, 4);  -- Inception is also of Sci-Fi genre
+
+
+INSERT INTO Users (username, email, password) 
+VALUES 
+('johndoe', 'johndoe@example.com', 'password123'),
+('janedoe', 'janedoe@example.com', 'password456'),
+('bobsmith', 'bobsmith@example.com', 'password789'),
+('alicejohnson', 'alicejohnson@example.com', 'passwordabc'),
+('charlesbrown', 'charlesbrown@example.com', 'passwordxyz');
+
+
+INSERT INTO Reviews (movie_id, user_id, rating, review_text) 
+VALUES 
+(1, 1, 10, 'Amazing movie with great action sequences!'),
+(2, 2, 9, 'A heartwarming and inspirational story!'),
+(3, 3, 8, 'A mind-bending thriller with an amazing plot twist.'),
+(4, 4, 10, 'The best Batman movie ever made! Heath Ledger\'s Joker is legendary.'),
+(5, 5, 7, 'A chilling and suspenseful horror movie with a strong cast.');
+
+
+INSERT INTO Roles (movie_id, artist_id, role_name) 
+VALUES 
+(1, 1, 'Iron Man'), 
+(2, 2, 'Chris Gardner'), 
+(3, 3, 'Dom Cobb'), 
+(4, 4, 'Bruce Wayne/Batman'), 
+(5, 5, 'Lorraine Warren');
