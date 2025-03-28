@@ -28,6 +28,12 @@ The test suite consists of 7 test cases:
     ```bash
     pip install selenium pytest
     ```
+/python-selenium-automation
+│
+├── /mini_project               # Folder containing the main project files
+│   ├── base_page.py            # Base page class with common functionalities
+│   ├── login_page.py           # Login page class for login functionalities
+│   └── test_page.py            # Test cases for testing the pages
 
 ## Usage
 1. Navigate to the project directory.
