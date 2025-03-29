@@ -137,8 +137,8 @@ def test_menus_visibility_and_clickability():
 
 # Test Case - 5: Create and Verify Admin User
 new_user_credentials = {
-        "username": "joedoe123",
-        "password": "joedoe123"
+        "username": "hitman122",
+        "password": "hitman122"
     }
 
 def test_create_and_verify_user():
