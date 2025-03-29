@@ -10,8 +10,8 @@ class AdminPage:
     def __init__(self, driver, new_user_credentials=None):
         self.driver = driver
         self.new_user_credentials = new_user_credentials or {
-            "username": "joedoe123",
-            "password": "joedoe123"
+            "username": "hitman122",
+            "password": "hitman122"
         }
         self.admin_button = (By.LINK_TEXT, "Admin")
         self.add_button_xpath = "//i[@class='oxd-icon bi-plus oxd-button-icon']"
@@ -61,9 +61,9 @@ class AdminPage:
         actions.send_keys(self.new_user_credentials["password"]).perform()
         actions.send_keys(Keys.TAB)
         sleep(1)
-        actions.send_keys(Keys.TAB)
-        sleep(1)
+        actions.send_keys(Keys.TAB)        
         actions.send_keys(Keys.ENTER).perform()
+        sleep(1)
 
 
     def search_for_user(self, username):
